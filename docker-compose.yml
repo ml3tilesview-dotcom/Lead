@@ -7,7 +7,9 @@ services:
       POSTGRES_PASSWORD: lead_pass
       POSTGRES_DB: lead_db
     ports:
-      - "5432:5432"
+      # Host port 5433 to avoid clashing with a local PostgreSQL on 5432;
+      # the backend container connects via the internal network (db:5432).
+      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:

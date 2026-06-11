@@ -1,0 +1,53 @@
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+*.egg
+.venv/
+venv/
+env/
+ENV/
+
+# Test artifacts
+test_lead.db
+*.db
+
+# Pytest
+.pytest_cache/
+.coverage
+htmlcov/
+*.cover
+
+# Ruff / linters
+.ruff_cache/
+
+# IDE
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+
+# Docker
+.docker/
+
+# Alembic
+# (keep alembic/versions tracked)
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/

@@ -1,0 +1,52 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: lead_user
+      POSTGRES_PASSWORD: lead_pass
+      POSTGRES_DB: lead_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lead_user -d lead_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      APP_NAME: "AI Lead Generation System"
+      ENVIRONMENT: development
+      DEBUG: "false"
+      DATABASE_URL: postgresql+asyncpg://lead_user:lead_pass@db:5432/lead_db
+      CORS_ORIGINS: "http://localhost:3000,http://localhost:8000"
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    command: >
+      sh -c "alembic upgrade head &&
+             uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health/live"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  postgres_data:
